@@ -13,7 +13,7 @@ export default function Activities() {
 
   useEffect(() => {
     const base = getApiBase()
-    fetch(`${base}/activities/`)
+    fetch(`/api/activities/`)
       .then((r) => r.json())
       .then((data) => {
         // support paginated responses and arrays
