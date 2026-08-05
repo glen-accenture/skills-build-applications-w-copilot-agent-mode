@@ -4,25 +4,14 @@ import db from './config/database';
 
 const app = express();
 const port = Number(process.env.PORT) || 8000;
-const codespaceName = process.env.CODESPACE_NAME;
-const codespaceUrl = codespaceName ? `https://${codespaceName}-8000.app.github.dev` : null;
 
-const allowedOrigins = [
-  `http://localhost:5173`,
-  `http://127.0.0.1:5173`,
-];
-if (codespaceUrl) allowedOrigins.push(codespaceUrl);
+// Build API base URL: prefer Codespaces URL when available, otherwise localhost
+const codespace = process.env.CODESPACE_NAME;
+const apiBaseUrl = codespace
+  ? `https://${codespace}-8000.app.github.dev`
+  : `http://localhost:${port}`;
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true); // allow curl, servers, or same-origin requests
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      return callback(new Error('CORS policy: origin not allowed'));
-    },
-  })
-);
-
+app.use(cors());
 app.use(express.json());
 
 app.get('/api/health', (req, res) => {
@@ -30,27 +19,27 @@ app.get('/api/health', (req, res) => {
 });
 
 app.get('/api/info', (req, res) => {
-  const baseUrl = codespaceUrl || `http://localhost:${port}`;
-  res.json({ name: 'OctoFit Tracker API', version: '0.1.0', baseUrl });
+  res.json({ name: 'OctoFit Tracker API', version: '0.1.0', baseUrl: apiBaseUrl });
 });
 
-// Lightweight mock endpoints for verification
+// Simple test endpoints for verification
 app.get('/api/users', (req, res) => {
-  res.json([
-    { id: 1, name: 'Alice' },
-    { id: 2, name: 'Bob' },
-  ]);
+  const users = [
+    { id: 'u1', name: 'Alice', email: 'alice@example.com' },
+    { id: 'u2', name: 'Bob', email: 'bob@example.com' }
+  ];
+  res.json(users);
 });
 
 app.get('/api/activities', (req, res) => {
-  res.json([
-    { id: 1, userId: 1, type: 'run', durationMinutes: 30 },
-    { id: 2, userId: 2, type: 'bike', durationMinutes: 45 },
-  ]);
+  const activities = [
+    { id: 'a1', userId: 'u1', type: 'run', distanceKm: 5, durationMin: 30 },
+    { id: 'a2', userId: 'u2', type: 'bike', distanceKm: 20, durationMin: 60 }
+  ];
+  res.json(activities);
 });
 
-app.listen(port, '0.0.0.0', () => {
+app.listen(port, () => {
   console.log(`OctoFit Tracker backend listening on port ${port}`);
-  if (codespaceUrl) console.log(`Codespaces URL: ${codespaceUrl}`);
-  else console.log(`Local URL: http://localhost:${port}`);
+  console.log(`API base URL: ${apiBaseUrl}`);
 });
