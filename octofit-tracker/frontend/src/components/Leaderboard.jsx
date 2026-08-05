@@ -12,7 +12,7 @@ export default function Leaderboard() {
 
   useEffect(() => {
     const base = getApiBase()
-    fetch(`${base}/leaderboard/`)
+    fetch(`api/leaderboard/`)
       .then((r) => r.json())
       .then((data) => setItems(Array.isArray(data) ? data : data.results || data.data || []))
       .catch(() => setItems([]))
