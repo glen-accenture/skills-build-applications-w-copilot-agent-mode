@@ -7,8 +7,18 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Codespaces-aware base URL (exported for use by the listener)
+const codespace = process.env.CODESPACE_NAME;
+export const apiBaseUrl = codespace
+  ? `https://${codespace}-8000.app.github.dev`
+  : `http://localhost:${process.env.PORT || 8000}`;
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'OctoFit Tracker backend is running' });
+});
+
+app.get('/api/info', (req, res) => {
+  res.json({ name: 'OctoFit Tracker API', version: '0.1.0', baseUrl: apiBaseUrl });
 });
 
 app.get('/api/users', (req, res) => {
