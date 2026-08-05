@@ -37,4 +37,30 @@ app.get('/api/activities', (req, res) => {
   res.json(activities);
 });
 
+// Placeholder endpoints for frontend features
+app.get('/api/leaderboard', (req, res) => {
+  // Return array or paginated shape; frontend supports both
+  const leaderboard = [
+    { id: 'u1', name: 'Alice', score: 150 },
+    { id: 'u2', name: 'Bob', score: 120 }
+  ];
+  res.json(leaderboard);
+});
+
+app.get('/api/teams', (req, res) => {
+  const teams = [
+    { id: 't1', name: 'Red Octos', members: ['u1', 'u2'] },
+    { id: 't2', name: 'Blue Squids', members: [] }
+  ];
+  res.json(teams);
+});
+
+app.get('/api/workouts', (req, res) => {
+  const workouts = [
+    { id: 'w1', name: 'Morning Run', durationMin: 30 },
+    { id: 'w2', name: 'Evening Ride', durationMin: 60 }
+  ];
+  res.json(workouts);
+});
+
 export default app;
